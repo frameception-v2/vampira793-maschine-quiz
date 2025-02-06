@@ -22,17 +22,74 @@ import { createStore } from "mipd";
 import { Label } from "~/components/ui/label";
 import { PROJECT_TITLE } from "~/lib/constants";
 
-function ExampleCard() {
+function QuizCard({ questions }: { questions: typeof QUIZ_QUESTIONS }) {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showResult, setShowResult] = useState(false);
+
+  const handleAnswer = (isCorrect: boolean) => {
+    if (isCorrect) setScore(score + 1);
+    
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      setShowResult(true);
+    }
+  };
+
+  const resetQuiz = () => {
+    setCurrentQuestion(0);
+    setScore(0);
+    setShowResult(false);
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Welcome to the Frame Template</CardTitle>
+        <CardTitle>Maschine Capabilities Quiz</CardTitle>
         <CardDescription>
-          This is an example card that you can customize or remove
+          {showResult ? `Score: ${score}/${questions.length}` : `Question ${currentQuestion + 1}/${questions.length}`}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <Label>Place content in a Card here.</Label>
+      <CardContent className="flex flex-col gap-4">
+        {!showResult ? (
+          <>
+            <Label className="text-lg">
+              {questions[currentQuestion].question}
+            </Label>
+            <div className="flex flex-col gap-2">
+              <button 
+                className="px-4 py-2 bg-purple-100 rounded-lg hover:bg-purple-200"
+                onClick={() => handleAnswer(questions[currentQuestion].answer === true)}
+              >
+                Yes
+              </button>
+              <button
+                className="px-4 py-2 bg-purple-100 rounded-lg hover:bg-purple-200"
+                onClick={() => handleAnswer(questions[currentQuestion].answer === false)}
+              >
+                No
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col gap-4">
+            <div className="space-y-2">
+              {questions.map((q, i) => (
+                <div key={i} className="text-sm">
+                  <p className="font-medium">{q.question}</p>
+                  <p className="text-muted-foreground">{q.explanation}</p>
+                </div>
+              ))}
+            </div>
+            <button
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+              onClick={resetQuiz}
+            >
+              Try Again
+            </button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -140,7 +197,7 @@ export default function Frame() {
         <h1 className="text-2xl font-bold text-center mb-4 text-gray-700 dark:text-gray-300">
           {PROJECT_TITLE}
         </h1>
-        <ExampleCard />
+        <QuizCard questions={QUIZ_QUESTIONS} />
       </div>
     </div>
   );
