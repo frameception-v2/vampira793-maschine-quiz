@@ -20,7 +20,7 @@ import { base, optimism } from "wagmi/chains";
 import { useSession } from "next-auth/react";
 import { createStore } from "mipd";
 import { Label } from "~/components/ui/label";
-import { PROJECT_TITLE } from "~/lib/constants";
+import { PROJECT_TITLE, QUIZ_QUESTIONS } from "~/lib/constants";
 
 function QuizCard({ questions }: { questions: typeof QUIZ_QUESTIONS }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
